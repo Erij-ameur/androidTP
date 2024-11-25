@@ -35,8 +35,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,13 +52,13 @@ class MainActivity : ComponentActivity() {
                             ProfileScreen(navController)
                         }
                         composable("films") {
-                            FilmScreen(navController, viewModel = viewModel())
+                            FilmScreen(navController, viewModel = hiltViewModel())
                         }
                         composable("series") {
-                            SerieScreen(navController, viewModel = viewModel())
+                            SerieScreen(navController, viewModel = hiltViewModel())
                         }
                         composable("acteurs") {
-                            ActeurScreen(navController, viewModel = viewModel() )
+                            ActeurScreen(navController, viewModel = hiltViewModel() )
                         }
                     }
                 }

@@ -5,7 +5,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 
-interface MovieApi {
+interface Tmdbapi {
     @GET("trending/movie/week")
     suspend fun getTrendingMovies(@Query("api_key") api_key: String,
                                   @Query("language") langage: String): MovieResult
@@ -23,10 +23,8 @@ interface MovieApi {
     @GET("genre/movie/list")
     suspend fun getGenres(@Query("api_key") api_key: String,
                           @Query("language") language: String): GenreListResponse
-}
 
 
-interface SerieApi {
     @GET("trending/tv/week")
     suspend fun getTrendingSeries(@Query("api_key") api_key: String): SerieResult
 
@@ -39,13 +37,10 @@ interface SerieApi {
                              @Query("api_key") api_key: String,
                              @Query("language") langage: String): CastResult
 
-    @GET("genre/tv/list")
-    suspend fun getGenres(@Query("api_key") api_key: String,
-                          @Query("language") language: String): GenreListResponse
-}
+//    @GET("genre/tv/list")
+//    suspend fun getGenres(@Query("api_key") api_key: String,
+//                          @Query("language") language: String): GenreListResponse
 
-
-interface ActorApi {
     @GET("trending/person/week")
     suspend fun getTrendingActors(@Query("api_key") api_key: String): ActorResult
 
