@@ -1,8 +1,14 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Service
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.tp1kotlin.Data.Actor
+import com.example.tp1kotlin.Data.Cast
+import com.example.tp1kotlin.Data.FilmEntity
+import com.example.tp1kotlin.Data.Genre
+import com.example.tp1kotlin.Data.Movie
+import com.example.tp1kotlin.Data.Serie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -25,11 +31,16 @@ class MovieViewModel @Inject constructor(
             try {
                 genres.value = repo.getGenres()
                 movies.value = repo.getFilms()
+                val favoriteFilms = repo.getFavFilms().map { it.fiche.id }
+                movies.value = movies.value.map { movie ->
+                    movie.copy(isFav = favoriteFilms.contains(movie.id))
+                }
             } catch (e: Exception) {
                 Log.e("MovieViewModel", "Erreur lors de la récupération des films: ${e.message}")
             }
         }
     }
+
 
     fun getSearchedMovies() {
         viewModelScope.launch {
@@ -70,6 +81,45 @@ class MovieViewModel @Inject constructor(
             }
         }
     }
+
+    private suspend fun refreshMoviesState() {
+        val favoriteFilms = repo.getFavFilms().map { it.fiche.id }
+        movies.value = movies.value.map { movie ->
+            movie.copy(isFav = favoriteFilms.contains(movie.id))
+        }
+    }
+
+    fun addFavorite(film: Movie) {
+        viewModelScope.launch {
+            try {
+                val filmEntity = FilmEntity(id = film.id, fiche = film)
+                repo.insertFilm(filmEntity)
+                refreshMoviesState()
+            } catch (e: Exception) {
+                Log.e("MovieViewModel", "Erreur lors de l'ajout du film aux favoris: ${e.message}")
+            }
+        }
+    }
+
+    fun removeFavorite(film: Movie) {
+        viewModelScope.launch {
+            try {
+                repo.deleteFilm(film.id)
+                refreshMoviesState()
+            } catch (e: Exception) {
+                Log.e("MovieViewModel", "Erreur lors de la suppression du film des favoris: ${e.message}")
+            }
+        }
+    }
+
+    fun onFavoriteClick(movie: Movie) {
+        if (movie.isFav) {
+            removeFavorite(movie)
+        } else {
+            addFavorite(movie)
+        }
+    }
+
 
 }
 
@@ -174,4 +224,6 @@ class ActorViewModel @Inject constructor(private val repo: Repository) : ViewMod
             }
         }
     }
+
+
 }

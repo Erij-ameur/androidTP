@@ -1,4 +1,4 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Views
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,15 +24,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.ui.Alignment
@@ -45,7 +47,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.window.core.layout.WindowWidthSizeClass
 import coil.compose.rememberAsyncImagePainter
-import coil.compose.rememberImagePainter
+import com.example.tp1kotlin.Data.Cast
+import com.example.tp1kotlin.Data.Movie
+import com.example.tp1kotlin.Service.MovieViewModel
 
 @Composable
 fun FilmScreen(navController: NavHostController, viewModel: MovieViewModel) {
@@ -97,6 +101,13 @@ fun FilmScreen(navController: NavHostController, viewModel: MovieViewModel) {
                                     onClick = {
                                         selectedMovie = displayMovies[index]
                                         isDialogVisible = true
+                                    },
+                                    onFavoriteClick = { movie ->
+                                        if (movie.isFav) {
+                                            viewModel.removeFavorite(movie)
+                                        } else {
+                                            viewModel.addFavorite(movie)
+                                        }
                                     }
                                 )
                             }
@@ -147,7 +158,15 @@ fun FilmScreen(navController: NavHostController, viewModel: MovieViewModel) {
                                     MovieCard(movie = displayMovies[index], onClick = {
                                         selectedMovie = displayMovies[index]
                                         isDialogVisible = true
-                                    })
+                                    },
+                                        onFavoriteClick = { movie ->
+                                            if (movie.isFav) {
+                                                viewModel.removeFavorite(movie)
+                                            } else {
+                                                viewModel.addFavorite(movie)
+                                            }
+                                        }
+                                        )
                                 }
                             }
                         } else {
@@ -171,9 +190,8 @@ fun FilmScreen(navController: NavHostController, viewModel: MovieViewModel) {
     }
 }
 
-
 @Composable
-fun MovieCard(movie: Movie, onClick: () -> Unit) {
+fun MovieCard(movie: Movie, onClick: () -> Unit, onFavoriteClick: (Movie) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -184,36 +202,52 @@ fun MovieCard(movie: Movie, onClick: () -> Unit) {
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Blue)
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
-        ) {
-            Image(
-                painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.poster_path}"),
-                contentDescription = movie.title,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp)
-                    .clip(RoundedCornerShape(12.dp))
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
+        Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .fillMaxSize()
+                    .padding(8.dp)
             ) {
-                Text(text = movie.title, fontWeight = FontWeight.Bold, color = Color.White)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = movie.release_date, color = Color.White)
+                Image(
+                    painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${movie.poster_path}"),
+                    contentDescription = movie.title,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = movie.title, fontWeight = FontWeight.Bold, color = Color.White)
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(text = movie.release_date, color = Color.White)
+                }
+            }
+
+            IconButton(
+                onClick = { onFavoriteClick(movie) },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+            ) {
+                Icon(
+                    imageVector = if (movie.isFav) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = null,
+                    tint = if (movie.isFav) Color.Red else Color.White
+                )
             }
         }
     }
 }
+
 
 @Composable
 fun MovieDetailsDialog(movie: Movie, movieViewModel: MovieViewModel, onDismiss: () -> Unit) {

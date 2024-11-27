@@ -1,5 +1,10 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Service
 
+import com.example.tp1kotlin.Data.ActorResult
+import com.example.tp1kotlin.Data.CastResult
+import com.example.tp1kotlin.Data.GenreListResponse
+import com.example.tp1kotlin.Data.MovieResult
+import com.example.tp1kotlin.Data.SerieResult
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query

@@ -1,8 +1,11 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Service
+import com.example.tp1kotlin.Data.FilmDao
+import com.example.tp1kotlin.Data.FilmEntity
 import javax.inject.Inject
 
 class Repository @Inject constructor(
     private val api: Tmdbapi,
+    private val dao: FilmDao,
 ) {
     private val api_key="474915450c136f48794281389330d269"
     private val language="en"
@@ -19,5 +22,15 @@ class Repository @Inject constructor(
 
     suspend fun getActors() = api.getTrendingActors(api_key).results
     suspend fun searchActors(searchText: String) = api.searchActors(api_key,searchText).results
+
+    suspend fun insertFilm(film: FilmEntity) {
+        dao.insertFilm(film)
+    }
+
+    suspend fun deleteFilm(id: Int) {
+        dao.deleteFilm(id)
+    }
+
+    suspend fun getFavFilms() = dao.getFavFilms()
 
 }

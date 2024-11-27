@@ -1,9 +1,7 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Views
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,15 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -44,28 +36,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.window.core.layout.WindowWidthSizeClass
 import coil.compose.rememberAsyncImagePainter
+import com.example.tp1kotlin.Service.ActorViewModel
+import com.example.tp1kotlin.Data.Actor
 
 @Composable
-fun SerieScreen(navController: NavHostController, viewModel: SerieViewModel) {
+fun ActeurScreen(navController: NavHostController, viewModel: ActorViewModel) {
     val windowSizeClass = currentWindowAdaptiveInfo().windowSizeClass
 
-    val series by viewModel.series.collectAsState()
-    val searchedSeries by viewModel.Searched_series.collectAsState()
+    val actors by viewModel.actors.collectAsState()
+    val searchedActors by viewModel.Searched_actors.collectAsState()
 
     var searchText by remember { mutableStateOf("") }
     var showSearchBar by remember { mutableStateOf(true) }
 
-    var selectedSerie by remember { mutableStateOf<Serie?>(null) }
-    var isDialogVisible by remember { mutableStateOf(false) }
-
     LaunchedEffect(Unit) {
-        viewModel.getSeries()
+        viewModel.getActors()
         viewModel.observeSearchTextChanges()
     }
 
@@ -89,21 +78,15 @@ fun SerieScreen(navController: NavHostController, viewModel: SerieViewModel) {
                         .fillMaxSize()
                         .padding(paddingValues)
                 ) {
-                    val displaySeries = if (searchedSeries.isNotEmpty()) searchedSeries else series
-                    if (displaySeries.isNotEmpty()) {
+                    val displayActors = if (searchedActors.isNotEmpty()) searchedActors else actors
+                    if (displayActors.isNotEmpty()) {
                         LazyVerticalGrid(
                             columns = GridCells.Fixed(2),
                             contentPadding = PaddingValues(8.dp),
                             modifier = Modifier.fillMaxSize()
                         ) {
-                            items(displaySeries.size) { index ->
-                                SerieCard(
-                                    serie = displaySeries[index],
-                                    onClick = {
-                                        selectedSerie = displaySeries[index]
-                                        isDialogVisible = true
-                                    }
-                                )
+                            items(displayActors.size) { index ->
+                                ActorCard(actor = displayActors[index])
                             }
                         }
                     } else {
@@ -139,17 +122,17 @@ fun SerieScreen(navController: NavHostController, viewModel: SerieViewModel) {
                             .fillMaxSize()
                             .padding(16.dp)
                     ) {
-                        val displaySeries =
-                            if (searchedSeries.isNotEmpty()) searchedSeries else series
+                        val displayActors =
+                            if (searchedActors.isNotEmpty()) searchedActors else actors
 
-                        if (displaySeries.isNotEmpty()) {
+                        if (displayActors.isNotEmpty()) {
                             LazyVerticalGrid(
                                 columns = GridCells.Fixed(2),
                                 contentPadding = PaddingValues(8.dp),
                                 modifier = Modifier.fillMaxSize()
                             ) {
-                                items(displaySeries.size) { index ->
-                                    SerieCard(serie = displaySeries[index], onClick = {})
+                                items(displayActors.size) { index ->
+                                    ActorCard(actor = displayActors[index])
                                 }
                             }
                         } else {
@@ -163,23 +146,16 @@ fun SerieScreen(navController: NavHostController, viewModel: SerieViewModel) {
             }
         }
     }
-    if (isDialogVisible && selectedSerie != null) {
-        SerieDetailsDialog(
-            serie = selectedSerie!!,
-            serieViewModel = viewModel,
-            onDismiss = { isDialogVisible = false }
-        )
-    }
 }
 
+
 @Composable
-fun SerieCard(serie: Serie, onClick: () -> Unit) {
+fun ActorCard(actor: Actor) {
     Card(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
-            .height(220.dp)
-            .clickable { onClick() },
+            .height(220.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = Color.Blue)
@@ -190,8 +166,8 @@ fun SerieCard(serie: Serie, onClick: () -> Unit) {
                 .padding(8.dp)
         ) {
             Image(
-                painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${serie.poster_path}"),
-                contentDescription = serie.name,
+                painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${actor.profile_path}"),
+                contentDescription = actor.name,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -207,97 +183,7 @@ fun SerieCard(serie: Serie, onClick: () -> Unit) {
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = serie.name, fontWeight = FontWeight.Bold, color = Color.White)
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = serie.first_air_date, color = Color.White)
-            }
-        }
-    }
-}
-
-
-@Composable
-fun SerieDetailsDialog(serie: Serie, serieViewModel: SerieViewModel, onDismiss: () -> Unit) {
-    val genreNames = serieViewModel.getGenreNames(serie.genre_ids)
-    val cast by serieViewModel.serieCast.collectAsState()
-
-
-    LaunchedEffect(serie.id) {
-        serieViewModel.getSerieCast(serie.id)
-    }
-
-    androidx.compose.ui.window.Dialog(onDismissRequest = { onDismiss() }) {
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = serie.name, style = MaterialTheme.typography.headlineMedium)
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Image(
-                        painter = rememberAsyncImagePainter("https://image.tmdb.org/t/p/w500${serie.backdrop_path}"),
-                        contentDescription = "${serie.name} Poster",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .clip(RoundedCornerShape(12.dp))
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(text = "Date de sortie: ${serie.first_air_date}")
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Genres: ${genreNames.joinToString(", ")}",
-                        modifier = Modifier.padding(8.dp)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(text = "Synopsis:")
-                    Text(
-                        text = serie.overview,
-                        modifier = Modifier.padding(8.dp),
-                        textAlign = TextAlign.Justify
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(text = "Le Casting:")
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    LazyRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(cast) { actor ->
-                            CastCard(actor = actor)
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    FloatingActionButton(
-                        onClick = { onDismiss() },
-                        containerColor = Color.Blue,
-                        modifier = Modifier
-                            .width(120.dp)
-                            .height(33.dp)
-                    ) {
-                        Text(text = "Fermer", color = Color.White)
-                    }
-                }
+                Text(text = actor.name, fontWeight = FontWeight.Bold, color = Color.White)
             }
         }
     }

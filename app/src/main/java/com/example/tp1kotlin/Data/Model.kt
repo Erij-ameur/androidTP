@@ -1,4 +1,4 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Data
 
 data class MovieResult(
     val page: Int,
@@ -22,7 +22,8 @@ data class Movie(
     val title: String,
     val video: Boolean,
     val vote_average: Double,
-    val vote_count: Int
+    val vote_count: Int,
+    val isFav: Boolean = false
 )
 
 data class Genre(
@@ -76,7 +77,8 @@ data class Serie(
     val popularity: Double,
     val poster_path: String,
     val vote_average: Double,
-    val vote_count: Int
+    val vote_count: Int,
+    val isFav: Boolean = false
 )
 
 data class ActorResult(
@@ -95,5 +97,6 @@ data class Actor(
     val name: String,
     val original_name: String,
     val popularity: Double,
-    val profile_path: String
+    val profile_path: String,
+    val isFav: Boolean = false
 )

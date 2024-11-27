@@ -1,4 +1,4 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Views
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.window.core.layout.WindowWidthSizeClass
+import com.example.tp1kotlin.R
 
 
 @Composable

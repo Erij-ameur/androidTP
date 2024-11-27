@@ -4,9 +4,14 @@ plugins {
     kotlin("plugin.serialization") version "1.9.25"
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.room")
 }
 
 android {
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
+
     namespace = "com.example.tp1kotlin"
     compileSdk = 34
 
@@ -50,6 +55,8 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+
 }
 
 dependencies {
@@ -63,6 +70,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.play.services.base)
+    implementation(libs.androidx.room.common)
+    implementation(libs.androidx.room.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -79,5 +88,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.52")
     kapt("com.google.dagger:hilt-compiler:2.52")
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
 }

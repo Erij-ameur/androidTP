@@ -1,4 +1,4 @@
-package com.example.tp1kotlin
+package com.example.tp1kotlin.Views
 
 import android.annotation.SuppressLint
 import com.example.tp1kotlin.ui.theme.TP1KotlinTheme
