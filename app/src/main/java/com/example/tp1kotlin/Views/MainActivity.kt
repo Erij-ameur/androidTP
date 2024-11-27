@@ -32,11 +32,19 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.Icons
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kotlinx.serialization.Serializable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.currentBackStackEntryAsState
 import dagger.hilt.android.AndroidEntryPoint
+
+@Serializable class profile
+@Serializable class films
+@Serializable class series
+@Serializable class acteurs
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -46,20 +54,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             TP1KotlinTheme {
                 val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
                 Scaffold {
-                    NavHost(navController = navController, startDestination = "profile") {
-                        composable("profile") {
-                            ProfileScreen(navController)
-                        }
-                        composable("films") {
-                            FilmScreen(navController, viewModel = hiltViewModel())
-                        }
-                        composable("series") {
-                            SerieScreen(navController, viewModel = hiltViewModel())
-                        }
-                        composable("acteurs") {
-                            ActeurScreen(navController, viewModel = hiltViewModel() )
-                        }
+                    NavHost(navController = navController, startDestination = profile()) {
+                        composable<profile> { ProfileScreen(navController) }
+                        composable<films> { FilmScreen(navController, viewModel = hiltViewModel()) }
+                        composable<series> { SerieScreen(navController, viewModel = hiltViewModel())}
+                        composable<acteurs> { ActeurScreen(navController, viewModel = hiltViewModel())}
+
                     }
                 }
             }
@@ -82,7 +85,7 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
         ) {
 
             IconButton(
-                onClick = { navController.navigate("films") },
+                onClick = { navController.navigate(films()) },
                 modifier = Modifier.fillMaxWidth().height(70.dp)
             ) {
                 Column(
@@ -95,7 +98,7 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
             }
 
             IconButton(
-                onClick = { navController.navigate("series") },
+                onClick = { navController.navigate(series()) },
                 modifier = Modifier.fillMaxWidth().height(70.dp)
             ) {
                 Column(
@@ -108,7 +111,7 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
             }
 
             IconButton(
-                onClick = { navController.navigate("acteurs") },
+                onClick = { navController.navigate(acteurs()) },
                 modifier = Modifier.fillMaxWidth().height(70.dp)
             ) {
                 Column(
@@ -129,19 +132,19 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
                 icon = { Icon(Icons.Default.Home, contentDescription = "Films") },
                 label = { Text("Films") },
                 selected = navController.currentDestination?.route == "films",
-                onClick = { navController.navigate("films") }
+                onClick = { navController.navigate(films()) }
             )
             NavigationBarItem(
                 icon = { Icon(Icons.Default.DateRange, contentDescription = "Series") },
                 label = { Text("Series") },
                 selected = navController.currentDestination?.route == "series",
-                onClick = { navController.navigate("series") }
+                onClick = { navController.navigate(series()) }
             )
             NavigationBarItem(
                 icon = { Icon(Icons.Default.Person, contentDescription = "Acteurs") },
                 label = { Text("Acteurs") },
                 selected = navController.currentDestination?.route == "acteurs",
-                onClick = { navController.navigate("acteurs") }
+                onClick = { navController.navigate(acteurs()) }
             )
         }
     }
