@@ -176,7 +176,7 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
                 icon = { Icon(Icons.Default.Star, contentDescription = "playlists") },
                 label = { Text("playlists") },
                 selected = navController.currentDestination?.route == "playlists",
-                onClick = { navController.navigate(acteurs()) }
+                onClick = { navController.navigate(playlists()) }
             )
         }
     }

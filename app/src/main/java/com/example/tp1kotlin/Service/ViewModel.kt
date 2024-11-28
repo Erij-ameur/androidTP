@@ -231,14 +231,21 @@ class ActorViewModel @Inject constructor(private val repo: Repository) : ViewMod
 
 class PlaylistViewModel : ViewModel() {
     val playlists = MutableStateFlow<List<Playlist>>(listOf())
+
+    fun getPlaylist() {
+        viewModelScope.launch {
+            try {
+                playlists.value = listOf(fetchPlayList())
+            } catch (e: Exception) {
+                Log.e("PlaylistViewModel", "Erreur lors de la récupération des playlists:  ${e.message}")
+            }
+        }
+    }
+
+
     fun fetchPlayList():Playlist{
         val moshi = Moshi.Builder().build()
         return moshi.adapter(Playlist::class.java).fromJson(playlistjson)!!
     }
 
-    fun getPlaylist(){
-        viewModelScope.launch {
-            playlists.value = listOf(fetchPlayList())
-        }
-    }
 }

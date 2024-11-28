@@ -92,7 +92,6 @@ dependencies {
 
     kapt("androidx.room:room-compiler:2.6.1")
 
-    implementation("com.squareup.moshi:moshi:1.15.1")
 
 
 }
