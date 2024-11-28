@@ -39,6 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import kotlinx.serialization.Serializable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -64,7 +66,7 @@ class MainActivity : ComponentActivity() {
                         composable<films> { FilmScreen(navController, viewModel = hiltViewModel()) }
                         composable<series> { SerieScreen(navController, viewModel = hiltViewModel())}
                         composable<acteurs> { ActeurScreen(navController, viewModel = hiltViewModel())}
-                        composable<playlists> { PlaylistScreen(navController, viewModel = hiltViewModel())}
+                        composable<playlists> { PlaylistScreen(navController, viewModel = viewModel())}
 
                     }
                 }
@@ -89,7 +91,9 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
 
             IconButton(
                 onClick = { navController.navigate(films()) },
-                modifier = Modifier.fillMaxWidth().height(70.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -102,7 +106,9 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
 
             IconButton(
                 onClick = { navController.navigate(series()) },
-                modifier = Modifier.fillMaxWidth().height(70.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -115,7 +121,9 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
 
             IconButton(
                 onClick = { navController.navigate(acteurs()) },
-                modifier = Modifier.fillMaxWidth().height(70.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,7 +136,9 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
 
             IconButton(
                 onClick = { navController.navigate(playlists()) },
-                modifier = Modifier.fillMaxWidth().height(70.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(70.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,

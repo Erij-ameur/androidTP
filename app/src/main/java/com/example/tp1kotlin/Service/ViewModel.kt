@@ -3,16 +3,19 @@ package com.example.tp1kotlin.Service
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.myapplicationtest.playlistjson
 import com.example.tp1kotlin.Data.Actor
 import com.example.tp1kotlin.Data.Cast
 import com.example.tp1kotlin.Data.FilmEntity
 import com.example.tp1kotlin.Data.Genre
 import com.example.tp1kotlin.Data.Movie
+import com.example.tp1kotlin.Data.Playlist
 import com.example.tp1kotlin.Data.Serie
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.squareup.moshi.Moshi
 
 @HiltViewModel
 class MovieViewModel @Inject constructor(
@@ -224,6 +227,18 @@ class ActorViewModel @Inject constructor(private val repo: Repository) : ViewMod
             }
         }
     }
+}
 
+class PlaylistViewModel : ViewModel() {
+    val playlists = MutableStateFlow<List<Playlist>>(listOf())
+    fun fetchPlayList():Playlist{
+        val moshi = Moshi.Builder().build()
+        return moshi.adapter(Playlist::class.java).fromJson(playlistjson)!!
+    }
 
+    fun getPlaylist(){
+        viewModelScope.launch {
+            playlists.value = listOf(fetchPlayList())
+        }
+    }
 }
