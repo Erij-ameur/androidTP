@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -45,6 +46,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @Serializable class films
 @Serializable class series
 @Serializable class acteurs
+@Serializable class playlists
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -62,6 +64,7 @@ class MainActivity : ComponentActivity() {
                         composable<films> { FilmScreen(navController, viewModel = hiltViewModel()) }
                         composable<series> { SerieScreen(navController, viewModel = hiltViewModel())}
                         composable<acteurs> { ActeurScreen(navController, viewModel = hiltViewModel())}
+                        composable<playlists> { PlaylistScreen(navController, viewModel = hiltViewModel())}
 
                     }
                 }
@@ -123,6 +126,19 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
                 }
             }
 
+            IconButton(
+                onClick = { navController.navigate(playlists()) },
+                modifier = Modifier.fillMaxWidth().height(70.dp)
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Icon(Icons.Default.Star, contentDescription = "playlists")
+                    Text("playlists")
+                }
+            }
+
         }
     }
     else {
@@ -144,6 +160,12 @@ fun Navbar(navController: NavHostController, isVertical: Boolean) {
                 icon = { Icon(Icons.Default.Person, contentDescription = "Acteurs") },
                 label = { Text("Acteurs") },
                 selected = navController.currentDestination?.route == "acteurs",
+                onClick = { navController.navigate(acteurs()) }
+            )
+            NavigationBarItem(
+                icon = { Icon(Icons.Default.Star, contentDescription = "playlists") },
+                label = { Text("playlists") },
+                selected = navController.currentDestination?.route == "playlists",
                 onClick = { navController.navigate(acteurs()) }
             )
         }

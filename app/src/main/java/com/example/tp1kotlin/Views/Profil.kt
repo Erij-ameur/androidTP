@@ -100,7 +100,7 @@ fun ContactAndButtonSection(navController: NavHostController) {
 
         Button(
             onClick = {
-                navController.navigate(films())
+                navController.navigate(playlists())
             },
             colors = ButtonDefaults.buttonColors(containerColor = Color.Blue),
             modifier = Modifier.align(Alignment.CenterHorizontally)
